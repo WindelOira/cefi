@@ -33,7 +33,8 @@ class AuthController extends Controller
      * Register
      */
     public function register(Request $request) {
-        $data = $request->only(['name', 'email', 'password', 'role',]);
+        $data = $request->only(['name', 'email', 'password', 'type',]);
+        $data['role'] = $request->type;
         $data['password'] = Hash::make($data['password']);
         $meta = json_decode($request->meta, TRUE);
 

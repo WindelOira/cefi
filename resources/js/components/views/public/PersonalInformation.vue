@@ -197,7 +197,7 @@
                     params  : this.model,
                 }).then((response) => {
                     this.$router.push({
-                        name : 'personal-information'
+                        name : 'index'
                     })
                 })
             },
