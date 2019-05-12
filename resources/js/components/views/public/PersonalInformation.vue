@@ -55,6 +55,12 @@
                                         class="form-control-sm"></d-input>
                             </validate>
                             <validate class="form-group">
+                                <label class="mb-1">Gender</label>
+                                <d-form-select v-model="model.meta.gender.selected">
+                                    <option v-for="gender in model.meta.gender.options" :key="gender.key" :value="gender.key">{{ gender.label }}</option>
+                                </d-form-select>
+                            </validate>
+                            <validate class="form-group">
                                 <label class="mb-1">{{ $route.params.type == 'employee' ? 'Department/Position' : 'Grade/Course' }}</label>
                                 <d-input v-model="model.meta.designation" 
                                         name="designation" 
@@ -153,6 +159,13 @@
                         height      : null,
                         weight      : null,
                         bp          : null,
+                        gender      : {
+                            selected    : 'm',
+                            options     : [
+                                {key: 'm', label: 'Male'},
+                                {key: 'f', label: 'Female'},
+                            ],
+                        },
                         guardian    : {
                             name        : null,
                             phone       : null,

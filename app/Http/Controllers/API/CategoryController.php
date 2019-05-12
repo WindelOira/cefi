@@ -62,7 +62,6 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->parent = isset($data['parent']) ? $data['parent'] : NULL;
         $category->name = $data['name'];
-        $category->slug = $data['slug'];
         $category->description = isset($data['description']) ? $data['description'] : NULL;
         $category->complainable = $data['complainable'];
 

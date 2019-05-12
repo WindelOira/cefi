@@ -19,12 +19,6 @@
                                 class="form-control-sm"></d-input>
                     </validate>
                     <validate class="form-group">
-                        <label class="mb-1">Slug</label>
-                        <d-input v-model="model.category.slug" 
-                                name="slug" 
-                                class="form-control-sm"></d-input>
-                    </validate>
-                    <validate class="form-group">
                         <label class="mb-1">Description</label>
                         <d-textarea v-model="model.category.description" 
                                     name="description" 
@@ -93,7 +87,6 @@
                         },
                         type        : this.$route.params.type,
                         name        : null,
-                        slug        : null,
                         description : null,
                         complainable: false,
                     },
@@ -141,7 +134,6 @@
                     params  : {
                         parent          : this.model.category.parent.selected,
                         name            : this.model.category.name,
-                        slug            : this.model.category.slug,
                         description     : this.model.category.description,
                         complainable    : this.model.category.complainable ? 1 : 0,
                     },
@@ -150,7 +142,6 @@
 
                     this.table.data[this.table.activeIndex].parent = response.data.parent
                     this.table.data[this.table.activeIndex].name = response.data.name
-                    this.table.data[this.table.activeIndex].slug = response.data.slug
                     this.table.data[this.table.activeIndex].description = response.data.description
                     this.table.data[this.table.activeIndex].complainable = response.data.complainable ? true : false
 
@@ -165,7 +156,6 @@
                         parent          : this.model.category.parent.selected,
                         type            : this.$route.params.type,
                         name            : this.model.category.name,
-                        slug            : this.model.category.slug,
                         description     : this.model.category.description,
                         complainable    : this.model.category.complainable ? 1 : 0,
                     },
@@ -188,7 +178,6 @@
                 this.model.category.mode = 'add'
                 this.model.category.parent.selected = null
                 this.model.category.name = null
-                this.model.category.slug = null
                 this.model.category.description = null
                 this.model.category.complainable = false
             },
@@ -207,7 +196,6 @@
                             this.model.category.mode = 'edit'
                             this.model.category.parent.selected = response.data.parent
                             this.model.category.name = response.data.name
-                            this.model.category.slug = response.data.slug
                             this.model.category.description = response.data.description
                             this.model.category.complainable = response.data.complainable == 1 ? true : false
                         })
@@ -220,7 +208,7 @@
                             method      : 'DELETE',
                             url         : 'category/'+ row.id
                         }).then((response) => {
-                            this.table.data.splice(this.table.response.indexOf(row), 1)
+                            this.table.data.splice(this.table.indexOf(row), 1)
                             this.loading = false
                             this.$refs.alerts.add('Category '+ response.data.name +' deleted', 'errors')
                         })

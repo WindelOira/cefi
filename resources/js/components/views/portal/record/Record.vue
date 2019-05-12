@@ -43,6 +43,16 @@
                                 </d-col>
                                 <d-col md="6" sm="6" class="col">
                                     <validate class="form-group">
+                                        <label class="mb-1">Gender</label>
+                                        <d-form-select v-model="model.record.meta.gender.selected" style="height: 34.2px;">
+                                            <option v-for="gender in model.record.meta.gender.options" :key="gender.key" :value="gender.key">{{ gender.label }}</option>
+                                        </d-form-select>
+                                    </validate>
+                                </d-col>
+                            </d-row>
+                            <d-row class="form-row" v-if="$auth.user().role != 'student'">
+                                <d-col cols="12">
+                                    <validate class="form-group">
                                         <label class="mb-1">Position</label>
                                         <d-input v-model="model.record.meta.position" 
                                                 class="form-control-sm"></d-input>
@@ -130,6 +140,13 @@
                             weight      : null,
                             height      : null,
                             bp          : null,
+                            gender      : {
+                                selected    : 'm',
+                                options     : [
+                                    {key: 'm', label: 'Male'},
+                                    {key: 'f', label: 'Female'},
+                                ],
+                            },
                             guardian    : {
                                 name        : null,
                                 phone       : null,

@@ -79,6 +79,13 @@ class UserController extends Controller
             'weight'    => NULL,
             'height'    => NULL,
             'bp'        => NULL,
+            'gender'    => [
+                'selected'  => 'm',
+                'options'   => [
+                    ['key' => 'm', 'label' => 'Male'],
+                    ['key' => 'f', 'label' => 'Female'],
+                ],
+            ],
             'guardian'  => [
                 'name'      => NULL,
                 'phone'     => NULL,

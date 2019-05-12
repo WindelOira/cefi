@@ -10,14 +10,12 @@
                                 :key="top.key" 
                                 class="text-center">
                             {{ top.key }}
-                            <d-form-select v-model="top.selected" 
-                                        :disabled="$auth.user().role != 'admin'" 
-                                        class="mt-2">
-                                <option :value="null"></option>
-                                <option v-for="stat in status" 
-                                        :key="stat.key" 
-                                        :value="stat.key">{{ stat.label }}</option>
-                            </d-form-select>
+                            <d-input v-model="top.selected" 
+                                    type="number" 
+                                    min="0" 
+                                    max="7" 
+                                    :disabled="$auth.user().role != 'admin'" 
+                                    class="mt-2"></d-input>
                         </d-col>
                     </d-row>
                     <d-row class="mb-3 form-row teeth-chart teeth-chart--bottom">
@@ -25,14 +23,12 @@
                                 :key="bottom.key" 
                                 class="text-center">
                             {{ bottom.key }}
-                            <d-form-select v-model="bottom.selected" 
+                            <d-input v-model="bottom.selected" 
+                                    type="number" 
+                                    min="0" 
+                                    max="7" 
                                     :disabled="$auth.user().role != 'admin'" 
-                                    class="mt-1">
-                                <option :value="null"></option>
-                                <option v-for="stat in status" 
-                                        :key="stat.key" 
-                                        :value="stat.key">{{ stat.label }}</option>
-                            </d-form-select>
+                                    class="mt-2"></d-input>
                         </d-col>
                     </d-row>
                 </div>

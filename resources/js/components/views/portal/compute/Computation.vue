@@ -2,14 +2,21 @@
     <div>
         <page-header>Computation</page-header>
         <d-row class="form-row mb-3">
-            <d-col md="11" cols="12">
+            <d-col md="2" cols="12">
                 <month-picker-input @input="filterRecords" 
                                     :default-month="date.month + 1" 
                                     :default-year="date.year"
                                     no-default 
                                     show-year></month-picker-input>
             </d-col>
-            <d-col md="1" cols="12" class="font-weight-bold text-center text-uppercase">
+            <d-col md="2" cols="12">
+                <d-form-select v-model="gender.selected" 
+                                @input="filterRecords(date)" 
+                                style="height: 36px;">
+                    <option v-for="gender in gender.options" :key="gender.key" :value="gender.key">{{ gender.label }}</option>
+                </d-form-select>
+            </d-col>
+            <d-col md="1" offset-md="7" cols="12" class="font-weight-bold text-center text-uppercase">
                 {{ new Date(date.year, date.month).toString('MMMM') }}
             </d-col>
         </d-row>
@@ -56,6 +63,14 @@
                     year        : new Date().getFullYear(),
                     days        : [],
                 },
+                gender      : {
+                    selected    : null,
+                    options     : [
+                        {key: null, label: 'Select-Gender'},
+                        {key: 'm', label: 'Male'},
+                        {key: 'f', label: 'Female'},
+                    ],
+                },
                 categories  : [],
                 records     : [],
                 total       : 0,
@@ -83,7 +98,7 @@
                     method  : 'GET',
                 }).then((response) => {
                     response.data.forEach((category) => {
-                        if( 0 < category.complainable ) {
+                        if( 1 == category.complainable ) {
                             this.categories.push(category)
                         }
                     })
@@ -91,7 +106,7 @@
             },
             getRecords() {
                 Vue.axios({
-                    url     : '/records/medical',
+                    url     : '/records/medical/'+ this.date.year +'/'+ this.date.month +'/'+ this.gender.selected, 
                     method  : 'GET',
                 }).then((response) => {
                     if( response.data.length ) {
@@ -134,7 +149,7 @@
             },
             filterRecords(date) {
                 this.date = {
-                    month       : date.monthIndex - 1,
+                    month       : ! isNaN(date.monthIndex) ? (date.monthIndex - 1) : this.date.month,
                     year        : date.year,
                     days        : [],
                 }

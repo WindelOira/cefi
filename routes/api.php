@@ -41,6 +41,45 @@ Route::group(['middleware' => 'auth:api'], function() {
         'type'  => '[a-z]+', 
         'id'    => '[0-9]+',
     ]);
+    Route::get('records/{type?}/{year?}/{month?}/{gender?}', function($type = null, $year = null, $month = null, $gender = null) {
+        if( ! is_null($year) || ! is_null($month) ) :
+            if( ! is_null($year) && is_null($month) ) :
+                $records = App\Record::whereType($type)->whereYear('created_at', $year)->get();
+            elseif( is_null($year) && ! is_null($month) ) :
+                $records = App\Record::whereType($type)->whereMonth('created_at', ($month + 1))->get();
+            else :
+                $records = App\Record::whereType($type)->whereYear('created_at', $year)->whereMonth('created_at', ($month + 1))->get();
+            endif;
+        else :
+            $records = App\Record::whereType($type)->get();
+        endif;
+
+        if( $gender != 'null' ) :
+            $rec = $records->reject(function($record) use ($gender) {
+                $metas = $record->user->metas;
+
+                foreach($metas as $meta) :
+                    if( $meta->key == 'gender' ) :
+                        $g = unserialize($meta->val);
+
+                        return $g['selected'] != $gender;
+                    endif;
+                endforeach;
+            });
+            $records = [];
+
+            foreach($rec as $r) :
+                $records[] = $r;
+            endforeach;  
+        endif;
+        
+        return response()->json($records);
+    })->where([
+        'type'      => '[a-z]+', 
+        'year'      => '[0-9]+',
+        'month'     => '[0-9]+',
+        'gender'    => '[a-z]+',
+    ]);
 
     Route::resource('user', 'API\UserController')->except([
         'index', 'store', 'show',
