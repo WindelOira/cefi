@@ -54,7 +54,7 @@ Route::group(['middleware' => 'auth:api'], function() {
             $records = App\Record::whereType($type)->get();
         endif;
 
-        if( $gender != 'null' ) :
+        if( 'all' != $gender ) :
             $rec = $records->reject(function($record) use ($gender) {
                 $metas = $record->user->metas;
 

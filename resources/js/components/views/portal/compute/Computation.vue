@@ -34,10 +34,10 @@
                         no-gutters 
                         class="form-row">
                     <d-col cols="2" class="p-1">{{ record.category.name }}</d-col>
-                    <d-col v-for="date in record.dates" 
-                            :key="date.date" 
+                    <d-col v-for="dt in record.dates" 
+                            :key="dt.date" 
                             class="p-1 text-center">
-                        {{ date.records.length }}
+                        {{ dt.records.length }}
                     </d-col>
                     <d-col cols="1" class="p-1 font-weight-bold text-center">{{ record.total }}</d-col>
                 </d-row>
@@ -64,9 +64,9 @@
                     days        : [],
                 },
                 gender      : {
-                    selected    : null,
+                    selected    : 'all',
                     options     : [
-                        {key: null, label: 'Select-Gender'},
+                        {key: 'all', label: 'Select-Gender'},
                         {key: 'm', label: 'Male'},
                         {key: 'f', label: 'Female'},
                     ],
@@ -88,7 +88,7 @@
 
                     this.date.days.push({
                         key     : day,
-                        date    : date.toString('yyyy-MM-d')
+                        date    : date.toString('yyyy-MM-dd')
                     })
                 }
             },
@@ -109,42 +109,42 @@
                     url     : '/records/medical/'+ this.date.year +'/'+ this.date.month +'/'+ this.gender.selected, 
                     method  : 'GET',
                 }).then((response) => {
-                    if( response.data.length ) {
+                    var _this = this
 
-                        this.categories.forEach((category, cIndex) => {
-                            var total = 0
+                    _this.categories.forEach((category, cIndex) => {
+                        var total = 0
 
-                            this.records.push({
-                                category    : {
-                                    id          : category.id,
-                                    name        : category.name,
-                                },
-                                dates       : [],
-                                total       : 0
-                            })
-
-                            this.date.days.forEach((day, dIndex) => {
-                                this.records[cIndex].dates.push({
-                                    date        : day.date,
-                                    records     : [],
-                                })
-                                response.data.filter((record, recordIndex) => {
-                                    var rDT = new Date(record.date)
-
-                                    if( (rDT.getFullYear() == this.date.year && rDT.getMonth() == this.date.month) &&
-                                        (0 <= record.data.chiefComplaint.indexOf(category.id.toString())) && 
-                                        (record.date == day.date) ) {
-                                        total++
-                                        this.total++
-
-                                        return this.records[cIndex].dates[dIndex].records.push(record)
-                                    }
-                                })
-                            })
-
-                            this.records[cIndex].total = total
+                        _this.records.push({
+                            category    : {
+                                id          : category.id,
+                                name        : category.name,
+                            },
+                            dates       : [],
+                            total       : 0
                         })
-                    }
+
+                        _this.date.days.forEach((day, dIndex) => {
+                            _this.records[cIndex].dates.push({
+                                date        : day.date,
+                                records     : [],
+                            })
+
+                            response.data.filter((record, recordIndex) => {
+                                var rDT = new Date(record.date)
+
+                                if( (rDT.getFullYear() == _this.date.year && rDT.getMonth() == _this.date.month) &&
+                                    (0 <= record.data.chiefComplaint.indexOf(category.id.toString())) && 
+                                    (record.date == day.date) ) {
+                                    total++
+                                    _this.total++
+
+                                    return _this.records[cIndex].dates[dIndex].records.push(record)
+                                }
+                            })
+                        })
+
+                        this.records[cIndex].total = total
+                    })
                 })
             },
             filterRecords(date) {
@@ -153,12 +153,10 @@
                     year        : date.year,
                     days        : [],
                 }
-                this.categories = []
                 this.records = []
                 this.total = 0
 
                 this.setCalendar()
-                this.getCategories()
                 this.getRecords()
             }
         },
