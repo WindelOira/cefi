@@ -4,6 +4,7 @@
         <alerts ref="alerts"></alerts>
         <d-row v-if="categories.length" class="form-row mb-4">
             <d-col v-for="category in categories" 
+                    v-if="category.items.length" 
                     :key="category.id">
                 <d-card class="card-small h-100">
                     <d-card-header>
@@ -252,10 +253,10 @@
                                     key     : category.id,
                                     value   : category.name
                                 })
+                            }
 
-                                if( 0 < category.complainable ) {
-                                    this.model.complains[category.id] = category.name
-                                }
+                            if( 1 == category.complainable ) {
+                                this.model.complains[category.id] = category.name
                             }
                         })
 
