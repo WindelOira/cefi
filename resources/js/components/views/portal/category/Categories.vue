@@ -208,7 +208,7 @@
                             method      : 'DELETE',
                             url         : 'category/'+ row.id
                         }).then((response) => {
-                            this.table.data.splice(this.table.indexOf(row), 1)
+                            this.table.data.splice(this.table.data.indexOf(row), 1)
                             this.loading = false
                             this.$refs.alerts.add('Category '+ response.data.name +' deleted', 'errors')
                         })
