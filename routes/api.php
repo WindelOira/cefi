@@ -44,11 +44,11 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('records/{type?}/{year?}/{month?}/{gender?}', function($type = null, $year = null, $month = null, $gender = null) {
         if( ! is_null($year) || ! is_null($month) ) :
             if( ! is_null($year) && is_null($month) ) :
-                $records = App\Record::whereType($type)->whereYear('created_at', $year)->get();
+                $records = App\Record::whereType($type)->whereYear('date', $year)->get();
             elseif( is_null($year) && ! is_null($month) ) :
-                $records = App\Record::whereType($type)->whereMonth('created_at', ($month + 1))->get();
+                $records = App\Record::whereType($type)->whereMonth('date', ($month + 1))->get();
             else :
-                $records = App\Record::whereType($type)->whereYear('created_at', $year)->whereMonth('created_at', ($month + 1))->get();
+                $records = App\Record::whereType($type)->whereYear('date', $year)->whereMonth('date', ($month + 1))->get();
             endif;
         else :
             $records = App\Record::whereType($type)->get();
