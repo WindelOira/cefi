@@ -9,16 +9,6 @@ export default [
         name        : 'index',
     },
     {
-        path        : '/forms',
-        component   : Forms, 
-        name        : 'forms',
-    },
-    {
-        path        : '/personal-information/:type',
-        component   : PersonalInformation, 
-        name        : 'personal-information',
-    },
-    {
         path        : '*',
         redirect    : '/'
     },

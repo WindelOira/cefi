@@ -136,7 +136,7 @@
                         @click.prevent="model.record.hasRecord ? updateRecord() : addRecord()">Save</d-button>
                 <d-button v-if="$auth.user().role == 'admin'" 
                         theme="light" 
-                        @click="$router.push({name: 'portal.records.edit', params: {type: patient.type, id: $route.params.id}})" 
+                        @click="$router.push({name: 'portal.records.medical', params: {id: $route.params.id}})" 
                         class="ml-auto d-inline-flex align-items-center">
                     <vue-material-icon name="keyboard_backspace" size="20"></vue-material-icon>
                     <span class="ml-2">Return</span>

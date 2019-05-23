@@ -27,6 +27,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'shards-ui/dist/css/shards.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'vue-datetime/dist/vue-datetime.css'
+import 'vue-airbnb-style-datepicker/dist/vue-airbnb-style-datepicker.min.css'
 import 'es6-promise/auto'
 
 import Vue2Filters from 'vue2-filters'
@@ -45,6 +46,7 @@ import VueDataTables from 'vue-data-tables'
 import Datetime from 'vue-datetime'
 import MonthPicker from 'vue-month-picker'
 import MonthPickerInput from 'vue-month-picker'
+import AirbnbStyleDatepicker from 'vue-airbnb-style-datepicker'
 import VoerroTagsInput from '@voerro/vue-tagsinput'
 import VueRouter from 'vue-router'
 import Auth from '@js/auth.js'
@@ -69,6 +71,17 @@ Vue.use(VueDataTables)
 Vue.use(Datetime)
 Vue.use(MonthPicker)
 Vue.use(MonthPickerInput)
+Vue.use(AirbnbStyleDatepicker, {
+    colors: {
+        selected        : '#006442',
+        inRange         : '#049b67',
+        selectedText    : '#fff',
+        text            : '#565a5c',
+        inRangeBorder   : '#006442',
+        disabled        : '#fff',
+        hoveredInRange  : '#049b67'
+    }
+})
 
 Vue.component('tags-input', VoerroTagsInput)
 Vue.component(VueMaterialIcon.name, VueMaterialIcon)

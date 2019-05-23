@@ -19,6 +19,15 @@ class Category extends Model
     protected $fillable = ['parent', 'type', 'name', 'slug', 'description', 'complainable'];
 
     /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'deleted_at',
+    ];
+
+    /**
      * Return the sluggable configuration array for this model.
      *
      * @return array

@@ -34,6 +34,14 @@
                             <hr>
 
                             <validate class="form-group">
+                                <label class="mb-1 text-capitalize">{{ $route.params.type }} Number</label>
+                                <d-input v-model="model.number"
+                                        name="number" 
+                                        required 
+                                        class="form-control-sm"></d-input>
+                            </validate>
+
+                            <validate class="form-group">
                                 <label class="mb-1">Name</label>
                                 <d-input v-model="model.name"
                                         name="name" 
@@ -69,19 +77,23 @@
                             </validate>
 
                             <div class="form-row">
-                                <validate class="form-group col-md-6">
+                                <validate class="col-md-6">
                                     <label class="mb-1">Weight</label>
-                                    <d-input v-model="model.meta.weight" 
-                                            name="weight" 
-                                            required 
-                                            class="form-control-sm"></d-input>
+                                    <d-input-group size="sm" seamless class="mb-2">
+                                        <d-input v-model="model.meta.weight" 
+                                                name="weight" 
+                                                required/>
+                                        <d-input-group-text slot="append">kg.</d-input-group-text>
+                                    </d-input-group>
                                 </validate>
-                                <validate class="form-group col-md-6">
+                                <validate class="col-md-6">
                                     <label class="mb-1">Height</label>
-                                    <d-input v-model="model.meta.height" 
-                                            name="height" 
-                                            required 
-                                            class="form-control-sm"></d-input>
+                                    <d-input-group size="sm" seamless class="mb-2">
+                                        <d-input v-model="model.meta.height" 
+                                                name="height" 
+                                                required/>
+                                        <d-input-group-text slot="append">ft. / inch.</d-input-group-text>
+                                    </d-input-group>
                                 </validate>
                                 <validate class="form-group col-md-6">
                                     <label class="mb-1">BP</label>
@@ -151,6 +163,7 @@
                     type        : this.$route.params.type,
                     email       : null,
                     password    : null,
+                    number      : null,
                     name        : null,
                     meta        : {
                         address     : null,

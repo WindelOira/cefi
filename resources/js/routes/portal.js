@@ -1,6 +1,7 @@
 import Dashboard from '@js/components/views/portal/Dashboard.vue'
 import Records from '@js/components/views/portal/record/Records.vue'
 import Record from '@js/components/views/portal/record/Record.vue'
+import NewRecord from '@js/components/views/portal/record/NewRecord.vue'
 import Medical from '@js/components/views/portal/record/Medical.vue'
 import Dental from '@js/components/views/portal/record/Dental.vue'
 import Computation from '@js/components/views/portal/compute/Computation.vue'
@@ -19,6 +20,14 @@ export default [
         path        : '/portal/records/:type',
         component   : Records,
         name        : 'portal.records',
+        meta        : {
+            auth        : true,
+        }
+    },
+    {
+        path        : '/portal/records/:type/new',
+        component   : NewRecord,
+        name        : 'portal.records.new',
         meta        : {
             auth        : true,
         }

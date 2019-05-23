@@ -17,6 +17,15 @@ class Patient extends Model
     protected $fillable = ['name', 'slug', 'description'];
 
     /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'deleted_at',
+    ];
+
+    /**
      * Get the records for the patient.
      */
     public function records() {

@@ -6,20 +6,50 @@
         <d-row>
             <d-col cols="12" md="6" offset-md="3" sm="8" offset-sm="2">
                 <d-card>
-                    <d-card-header class="d-flex">
-                        <d-button-group size="small" class="ml-auto">
-                            <d-button @click="$router.push({name: 'portal.records.medical', params: {id: $route.params.id}})">Medical</d-button>
-                            <d-button @click="$router.push({name: 'portal.records.dental', params: {id: $route.params.id}})">Dental</d-button>
-                        </d-button-group>
-                    </d-card-header>
                     <d-card-body>
                         <vue-form :state="formState" @submit.prevent="update">
                             <d-row class="form-row">
                                 <d-col>
                                     <validate class="form-group">
-                                        <label class="mb-1">Name</label>
-                                        <d-input v-model="model.record.name" 
+                                        <label class="mb-1 text-capitalize">{{ $route.params.type }} Number</label>
+                                        <d-input v-model="model.record.meta.number"
+                                                name="number" 
                                                 required 
+                                                class="form-control-sm"></d-input>
+                                    </validate>
+                                </d-col>
+                            </d-row>
+                            <d-row class="form-row">
+                                <d-col md="4">
+                                    <validate class="form-group">
+                                        <label class="mb-1">First Name</label>
+                                        <d-input v-model="model.record.meta.fname" 
+                                                required 
+                                                class="form-control-sm"></d-input>
+                                    </validate>
+                                </d-col>
+                                <d-col md="4">
+                                    <validate class="form-group">
+                                        <label class="mb-1">Middle Name</label>
+                                        <d-input v-model="model.record.meta.mname" 
+                                                required 
+                                                class="form-control-sm"></d-input>
+                                    </validate>
+                                </d-col>
+                                <d-col md="4">
+                                    <validate class="form-group">
+                                        <label class="mb-1">Last Name</label>
+                                        <d-input v-model="model.record.meta.lname" 
+                                                required 
+                                                class="form-control-sm"></d-input>
+                                    </validate>
+                                </d-col>
+                            </d-row>
+                            <d-row class="form-row">
+                                <d-col>
+                                    <validate class="form-group">
+                                        <label class="mb-1">Email Address</label>
+                                        <d-input v-model="model.record.email" 
                                                 class="form-control-sm"></d-input>
                                     </validate>
                                 </d-col>
@@ -43,14 +73,14 @@
                                 </d-col>
                                 <d-col md="6" sm="6" class="col">
                                     <validate class="form-group">
-                                        <label class="mb-1">Gender</label>
+                                        <label class="mb-1">Sex</label>
                                         <d-form-select v-model="model.record.meta.gender.selected" style="height: 34.2px;">
                                             <option v-for="gender in model.record.meta.gender.options" :key="gender.key" :value="gender.key">{{ gender.label }}</option>
                                         </d-form-select>
                                     </validate>
                                 </d-col>
                             </d-row>
-                            <d-row class="form-row" v-if="$auth.user().role != 'student'">
+                            <d-row class="form-row" v-if="$route.params.type == 'employee'">
                                 <d-col cols="12">
                                     <validate class="form-group">
                                         <label class="mb-1">Position</label>
@@ -59,19 +89,83 @@
                                     </validate>
                                 </d-col>
                             </d-row>
+                            <d-row class="form-row" v-if="$route.params.type == 'student'">
+                                <d-col cols="12">
+                                    <validate class="form-group">
+                                        <label class="mb-1">Level</label>
+                                        <d-select v-model="model.record.meta.level.selected" class="form-control-sm">
+                                            <option v-for="level in model.record.meta.level.options" 
+                                                    :key="level.key" 
+                                                    :value="level.key">{{ level.label }}</option>
+                                        </d-select>
+                                    </validate>
+                                </d-col>
+                            </d-row>
+                            <d-row class="form-row" v-if="$route.params.type == 'student' && model.record.meta.level.selected == 'elementary'">
+                                <d-col cols="12">
+                                    <validate class="form-group">
+                                        <label class="mb-1">Grade</label>
+                                        <d-select v-model="model.record.meta.stage" class="form-control-sm">
+                                            <option v-for="elementary in options.elementary" 
+                                                    :key="elementary.key" 
+                                                    :value="elementary.key">{{ elementary.label }}</option>
+                                        </d-select>
+                                    </validate>
+                                </d-col>
+                            </d-row>
+                            <d-row class="form-row" v-if="$route.params.type == 'student' && model.record.meta.level.selected == 'high-school'">
+                                <d-col cols="12">
+                                    <validate class="form-group">
+                                        <label class="mb-1">Grade</label>
+                                        <d-select v-model="model.record.meta.stage" class="form-control-sm">
+                                            <option v-for="highSchool in options.highSchool" 
+                                                    :key="highSchool.key" 
+                                                    :value="highSchool.key">{{ highSchool.label }}</option>
+                                        </d-select>
+                                    </validate>
+                                </d-col>
+                            </d-row>
+                            <d-row class="form-row" v-if="$route.params.type == 'student' && model.record.meta.level.selected == 'senior-high'">
+                                <d-col cols="12">
+                                    <validate class="form-group">
+                                        <label class="mb-1">Grade</label>
+                                        <d-select v-model="model.record.meta.stage" class="form-control-sm">
+                                            <option v-for="seniorHigh in options.seniorHigh" 
+                                                    :key="seniorHigh.key" 
+                                                    :value="seniorHigh.key">{{ seniorHigh.label }}</option>
+                                        </d-select>
+                                    </validate>
+                                </d-col>
+                            </d-row>
+                            <d-row class="form-row" v-if="$route.params.type == 'student' && model.record.meta.level.selected == 'college'">
+                                <d-col cols="12">
+                                    <validate class="form-group">
+                                        <label class="mb-1">Course</label>
+                                        <d-input v-model="model.record.meta.stage" class="form-control-sm"></d-input>
+                                    </validate>
+                                </d-col>
+                            </d-row>
                             <d-row class="form-row">
                                 <d-col md="6" sm="6" class="col">
-                                    <validate class="form-group">
+                                    <validate>
                                         <label class="mb-1">Weight</label>
-                                        <d-input v-model="model.record.meta.weight" 
-                                                class="form-control-sm"></d-input>
+                                        <d-input-group size="sm" seamless class="mb-2">
+                                            <d-input v-model="model.record.meta.weight" 
+                                                    name="weight" 
+                                                    required/>
+                                            <d-input-group-text slot="append">kg.</d-input-group-text>
+                                        </d-input-group>
                                     </validate>
                                 </d-col>
                                 <d-col md="6" sm="6" class="col">
-                                    <validate class="form-group">
+                                    <validate>
                                         <label class="mb-1">Height</label>
-                                        <d-input v-model="model.record.meta.height" 
-                                                class="form-control-sm"></d-input>
+                                        <d-input-group size="sm" seamless class="mb-2">
+                                            <d-input v-model="model.record.meta.height" 
+                                                    name="height" 
+                                                    required/>
+                                            <d-input-group-text slot="append">ft. / inch.</d-input-group-text>
+                                        </d-input-group>
                                     </validate>
                                 </d-col>
                             </d-row>
@@ -104,7 +198,7 @@
                                 <d-button>Update</d-button>
                                 <d-button v-if="$auth.user().role == 'admin'" 
                                         theme="light" 
-                                        @click="$router.push({name: 'portal.records', params: {type: $route.params.type}})" 
+                                        @click.native="$router.push({name: 'portal.records.medical', params: {id: model.record.id}})" 
                                         class="ml-auto d-inline-flex align-items-center">
                                     <vue-material-icon name="keyboard_backspace" size="20"></vue-material-icon>
                                     <span class="ml-2">Return</span>
@@ -130,16 +224,50 @@
         data() {
             return {
                 formState   : {},
+                options     : {
+                    elementary  : [
+                        {key: 1, label: 1},
+                        {key: 2, label: 2},
+                        {key: 3, label: 3},
+                        {key: 4, label: 4},
+                        {key: 5, label: 5},
+                        {key: 6, label: 6},
+                    ],
+                    highSchool  : [
+                        {key: 7, label: 7},
+                        {key: 8, label: 8},
+                        {key: 9, label: 9},
+                        {key: 10, label: 10},
+                    ],
+                    seniorHigh  : [
+                        {key: 11, label: 11},
+                        {key: 12, label: 12},
+                    ]  
+                },
                 model       : {
                     record    : {
-                        name        : null,
+                        email       : null,
                         meta        : {
+                            number      : null,
+                            fname       : null,
+                            mname       : null,
+                            lname       : null,
                             address     : null,
                             birthday    : null,
                             position    : null,
                             weight      : null,
                             height      : null,
                             bp          : null,
+                            level       : {
+                                selected    : this.$route.params.type == 'employee' ? 'employee' : 'elementary',
+                                options     : [
+                                    {key: 'elementary', label: 'Elementary'},
+                                    {key: 'high-school', label: 'High School'},
+                                    {key: 'senior-high', label: 'Senior High'},
+                                    {key: 'college', label: 'College'},
+                                ]
+                            },
+                            stage       : this.$route.params.type == 'employee' ? null : 1,
                             gender      : {
                                 selected    : 'm',
                                 options     : [

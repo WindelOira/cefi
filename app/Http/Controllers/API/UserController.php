@@ -39,7 +39,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->only(['name', 'email', 'password', 'type',]);
+        $data = $request->only(['email', 'password', 'type',]);
         $data['password'] = Hash::make($data['password']);
         $meta = json_decode($request->meta, TRUE);
 
@@ -73,12 +73,26 @@ class UserController extends Controller
 
         $data = $user->toArray();
         $data['meta'] = [
+            'number'    => NULL,
+            'fname'     => NULL,
+            'mname'     => NULL,
+            'lname'     => NULL,
             'address'   => NULL,
             'birthday'  => NULL,
             'position'  => NULL,
             'weight'    => NULL,
             'height'    => NULL,
             'bp'        => NULL,
+            'level'     => [
+                'selected'    => $user->role == 'employee' ? 'employee' : 'elementary',
+                'options'     => [
+                    ['key'  => 'elementary', 'label' => 'Elementary'],
+                    ['key'  => 'high-school', 'label' => 'High School'],
+                    ['key'  => 'senior-high', 'label' => 'Senior High'],
+                    ['key'  => 'college', 'label' => 'College'],
+                ]
+            ],
+            'stage'     => $user->role == 'employee' ? NULL : 1,
             'gender'    => [
                 'selected'  => 'm',
                 'options'   => [
@@ -111,7 +125,6 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        $user->name = $request->name;
         
         $metas = json_decode($request->meta, TRUE);
 
@@ -142,14 +155,53 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        if( $user->metas ) :
-            foreach( $user->metas as $meta ) :
-                $meta->delete();
-            endforeach;
+        if( $user = User::onlyTrashed()->whereId($id)->first() ) :
+            $user->forceDelete();
+        else :
+            $user = User::findOrFail($id);
+            $user->delete();
         endif;
-        $user->delete();
 
+        return response()->json($user);
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function restore(Request $request)
+    {
+        if( ! $request->id ) return;
+        
+        User::withTrashed()->whereId($request->id)->restore();
+        $user = User::findOrFail($request->id);
+
+        return response()->json($user);
+    }
+
+    /**
+     * Register
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(Request $request) {
+        $data = $request->only(['email', 'type',]);
+        $data['password'] = '';
+        $data['role'] = $request->type;
+        $meta = json_decode($request->meta, TRUE);
+
+        $user = User::create($data);
+       
+        foreach( $meta as $key => $value ) :
+            $user->metas()->create([
+                'key'   => $key,
+                'val'   => is_array($value) ? serialize($value) : $value,
+            ]);
+        endforeach;
+        
         return response()->json($user);
     }
 }

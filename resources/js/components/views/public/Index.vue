@@ -24,8 +24,6 @@
                                     required></d-input>
                         </validate>
 
-                        <p>No account yet? <d-link :to="{name: 'forms'}">Create here</d-link></p>
-
                         <div class="d-flex">
                             <d-button>Login</d-button>
                             <d-button theme="light" 

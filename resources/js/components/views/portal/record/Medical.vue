@@ -1,6 +1,20 @@
 <template>
     <div>
-        <page-header>Medical Record</page-header>
+        <d-row>
+            <d-col md="6">
+                <page-header>Medical Record : {{ patient.meta.fname ? patient.meta.fname +' '+ patient.meta.mname +' '+ patient.meta.lname : patient.email }}</page-header>
+            </d-col>
+            <d-col md="6">
+                <ul class="list-unstyled my-2 d-flex justify-content-md-end justify-content-center">
+                    <li class="mr-2">
+                        <d-link :to="{name: 'portal.records.edit', params: {type: patient.role, id: patient.id}}">Profile</d-link>
+                    </li>
+                    <li>
+                        <d-link :to="{name: 'portal.records.dental', params: {id: patient.id}}">Dental Records</d-link>
+                    </li>
+                </ul>
+            </d-col>
+        </d-row>
         <alerts ref="alerts"></alerts>
         <d-row v-if="categories.length" class="form-row mb-4">
             <d-col v-for="category in categories" 
@@ -151,7 +165,7 @@
             <d-col cols="12" class="d-flex">
                 <d-button v-if="$auth.user().role == 'admin'" 
                         theme="light" 
-                        @click="$router.push({name: 'portal.records.edit', params: {type: patient.type, id: $route.params.id}})" 
+                        @click.native="$router.push({name: 'portal.records', params: {type: patient.role}})" 
                         class="ml-auto d-inline-flex align-items-center">
                     <vue-material-icon name="keyboard_backspace" size="20"></vue-material-icon>
                     <span class="ml-2">Return</span>

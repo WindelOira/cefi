@@ -10,9 +10,7 @@
 
                 <d-navbar-nav class="text-center">
                     <d-nav-item v-if="! $auth.check()" :to="{name: 'index'}">Login</d-nav-item>
-                    <d-nav-item v-if="$auth.check()" @click.native="$auth.logout()">
-                        <vue-material-icon name="power_settings_new" :size="20"></vue-material-icon>
-                    </d-nav-item>
+                    <d-nav-item v-if="$auth.check()" @click.native="$auth.logout()">Logout</d-nav-item>
                 </d-navbar-nav>
             </d-navbar>
         </d-container>
