@@ -3,27 +3,25 @@
 if( ! function_exists('is_serialized') ) :
     function is_serialized($value, &$result = null) {
         // Bit of a give away this one
-        if (!is_string($value))
-        {
+        if (!is_string($value)) :
             return false;
-        }
+        endif;
+
         // Serialized false, return true. unserialize() returns false on an
         // invalid string or it could return false if the string is serialized
         // false, eliminate that possibility.
-        if ($value === 'b:0;')
-        {
+        if ($value === 'b:0;') :
             $result = false;
             return true;
-        }
+        endif;
+
         $length	= strlen($value);
         $end	= '';
-        switch ($value[0])
-        {
+        switch ($value[0]) :
             case 's':
-                if ($value[$length - 2] !== '"')
-                {
+                if ($value[$length - 2] !== '"') :
                     return false;
-                }
+                endif;
             case 'b':
             case 'i':
             case 'd':
@@ -32,10 +30,10 @@ if( ! function_exists('is_serialized') ) :
             case 'a':
             case 'O':
                 $end .= '}';
-                if ($value[1] !== ':')
-                {
+                if ($value[1] !== ':') :
                     return false;
-                }
+                endif;
+                
                 switch ($value[2])
                 {
                     case 0:
@@ -61,12 +59,14 @@ if( ! function_exists('is_serialized') ) :
             break;
             default:
                 return false;
-        }
-        if (($result = @unserialize($value)) === false)
-        {
+        endswitch;
+
+        if( ($result = @unserialize($value)) === false ) :
             $result = null;
+
             return false;
-        }
+        endif;
+
         return true;
     }
 endif;

@@ -44,8 +44,6 @@ import locale from 'element-ui/lib/locale'
 import { DataTables, DataTablesServer } from 'vue-data-tables'
 import VueDataTables from 'vue-data-tables'
 import Datetime from 'vue-datetime'
-import MonthPicker from 'vue-month-picker'
-import MonthPickerInput from 'vue-month-picker'
 import AirbnbStyleDatepicker from 'vue-airbnb-style-datepicker'
 import VoerroTagsInput from '@voerro/vue-tagsinput'
 import VueRouter from 'vue-router'
@@ -69,8 +67,6 @@ Vue.use(DataTables)
 Vue.use(DataTablesServer)
 Vue.use(VueDataTables)
 Vue.use(Datetime)
-Vue.use(MonthPicker)
-Vue.use(MonthPickerInput)
 Vue.use(AirbnbStyleDatepicker, {
     colors: {
         selected        : '#006442',

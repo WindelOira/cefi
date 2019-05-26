@@ -44,7 +44,7 @@
                 <d-row v-for="data in datas" 
                         :key="data.id" 
                         no-gutters 
-                        class="form-row">
+                        class="form-row mb-3">
                     <d-col>
                         <h5>{{ data.name }}</h5>
                         <d-tabs>
@@ -86,30 +86,11 @@
                         </d-tabs>
                     </d-col>
                 </d-row>
-
-                <d-row no-gutters class="form-row font-weight-bold">
-                    <d-col cols="2" class="p-1">Health Complaint</d-col>
-                    <d-col v-for="day in date.days" 
-                            :key="day.key" 
-                            class="p-1 font-weight-bold text-center small">{{ day.key }}</d-col>
-                    <d-col cols="1" class="p-1 font-weight-bold text-center small">Total</d-col>
-                </d-row>
-                <d-row v-for="record in records" 
-                        :key="record.category.id" 
-                        no-gutters 
-                        class="form-row">
-                    <d-col cols="2" class="p-1 small">{{ record.category.name }}</d-col>
-                    <d-col v-for="dt in record.dates" 
-                            :key="dt.date" 
-                            class="p-1 text-center small">
-                        {{ dt.records.length }}
-                    </d-col>
-                    <d-col cols="1" class="p-1 font-weight-bold text-center">{{ record.total }}</d-col>
-                </d-row>
-                <d-row no-gutters class="form-row">
-                    <d-col md="1" offset-md="11" cols="12" class="p-1 font-weight-bold text-center">{{ total }}</d-col>
-                </d-row>
             </d-col>
+        </d-row>
+        <d-row no-gutters class="form-row">
+            <d-col md="11" cols="12" class="p-1 font-weight-bold">Total</d-col>
+            <d-col md="1" cols="12" class="p-1 font-weight-bold text-center">{{ total }}</d-col>
         </d-row>
     </div>
 </template>
@@ -187,6 +168,8 @@
                             this.categories.push(category)
                         }
                     })
+
+                    this.getRecords()
                 })
             },
             getRecords() {
@@ -273,7 +256,6 @@
         },
         mounted() {
             this.getCategories()
-            this.getRecords()
         }
     }
 </script>

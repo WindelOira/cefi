@@ -5,13 +5,22 @@
         <alerts ref="alerts"></alerts>
         <d-row>
             <d-col cols="12" md="6" offset-md="3" sm="8" offset-sm="2">
-                <d-card>
-                    <d-card-body>
-                        <vue-form :state="formState" @submit.prevent="update">
+                <d-card class="user-details mt-5">
+                    <d-card-body class="pt-0">
+                        <vue-form :state="formState" @submit.prevent="update" enctype="multipart/form-data">
+                            <div class="bg-white user-details__avatar mx-auto mb-4" :style="avatar.show ? 'background-image: url('+ avatar.preview +');' : ''">
+                                <label class="d-flex align-items-center justify-content-center">
+                                    <input ref="avatar" 
+                                        type="file" 
+                                        accept="image/*" 
+                                        @change="uploadAvatar"/>
+                                    <vue-material-icon name="photo" size="20"></vue-material-icon>
+                                </label>
+                            </div>
                             <d-row class="form-row">
                                 <d-col>
                                     <validate class="form-group">
-                                        <label class="mb-1 text-capitalize">{{ $route.params.type }} Number</label>
+                                        <label class="mb-1 text-capitalize">{{ $route.params.type ? $route.params.type : $auth.user().role }} Number</label>
                                         <d-input v-model="model.record.meta.number"
                                                 name="number" 
                                                 required 
@@ -56,6 +65,18 @@
                             </d-row>
                             <d-row class="form-row">
                                 <d-col>
+                                    <d-btn @click.prevent="togglePass = ! togglePass" 
+                                            size="sm" class="mb-2">{{ togglePass ? 'Cancel' : 'Change Password' }}</d-btn>
+                                    <validate v-if="togglePass" class="form-group">
+                                        <label class="mb-1">Password</label>
+                                        <d-input v-model="model.record.password" 
+                                                type="password" 
+                                                class="form-control-sm"></d-input>
+                                    </validate>
+                                </d-col>
+                            </d-row>
+                            <d-row class="form-row">
+                                <d-col>
                                     <validate class="form-group">
                                         <label class="mb-1">Address</label>
                                         <d-input v-model="model.record.meta.address" 
@@ -63,7 +84,7 @@
                                     </validate>
                                 </d-col>
                             </d-row>
-                            <d-row class="form-row">
+                            <d-row v-if="$auth.user().role == 'admin'" class="form-row">
                                 <d-col md="6" sm="6" class="col">
                                     <validate class="form-group">
                                         <label class="mb-1">Birthday</label>
@@ -80,7 +101,7 @@
                                     </validate>
                                 </d-col>
                             </d-row>
-                            <d-row class="form-row" v-if="$route.params.type == 'employee'">
+                            <d-row class="form-row" v-if="$auth.user().role == 'admin' && $route.params.type == 'employee'">
                                 <d-col cols="12">
                                     <validate class="form-group">
                                         <label class="mb-1">Position</label>
@@ -89,7 +110,7 @@
                                     </validate>
                                 </d-col>
                             </d-row>
-                            <d-row class="form-row" v-if="$route.params.type == 'student'">
+                            <d-row class="form-row" v-if="$auth.user().role == 'admin' && $route.params.type == 'student'">
                                 <d-col cols="12">
                                     <validate class="form-group">
                                         <label class="mb-1">Level</label>
@@ -101,7 +122,7 @@
                                     </validate>
                                 </d-col>
                             </d-row>
-                            <d-row class="form-row" v-if="$route.params.type == 'student' && model.record.meta.level.selected == 'elementary'">
+                            <d-row class="form-row" v-if="$auth.user().role == 'admin' && $route.params.type == 'student' && model.record.meta.level.selected == 'elementary'">
                                 <d-col cols="12">
                                     <validate class="form-group">
                                         <label class="mb-1">Grade</label>
@@ -113,7 +134,7 @@
                                     </validate>
                                 </d-col>
                             </d-row>
-                            <d-row class="form-row" v-if="$route.params.type == 'student' && model.record.meta.level.selected == 'high-school'">
+                            <d-row class="form-row" v-if="$auth.user().role == 'admin' && $route.params.type == 'student' && model.record.meta.level.selected == 'high-school'">
                                 <d-col cols="12">
                                     <validate class="form-group">
                                         <label class="mb-1">Grade</label>
@@ -125,7 +146,7 @@
                                     </validate>
                                 </d-col>
                             </d-row>
-                            <d-row class="form-row" v-if="$route.params.type == 'student' && model.record.meta.level.selected == 'senior-high'">
+                            <d-row class="form-row" v-if="$auth.user().role == 'admin' && $route.params.type == 'student' && model.record.meta.level.selected == 'senior-high'">
                                 <d-col cols="12">
                                     <validate class="form-group">
                                         <label class="mb-1">Grade</label>
@@ -137,7 +158,7 @@
                                     </validate>
                                 </d-col>
                             </d-row>
-                            <d-row class="form-row" v-if="$route.params.type == 'student' && model.record.meta.level.selected == 'college'">
+                            <d-row class="form-row" v-if="$auth.user().role == 'admin' && $route.params.type == 'student' && model.record.meta.level.selected == 'college'">
                                 <d-col cols="12">
                                     <validate class="form-group">
                                         <label class="mb-1">Course</label>
@@ -145,7 +166,7 @@
                                     </validate>
                                 </d-col>
                             </d-row>
-                            <d-row class="form-row">
+                            <d-row v-if="$auth.user().role == 'admin'" class="form-row">
                                 <d-col md="6" sm="6" class="col">
                                     <validate>
                                         <label class="mb-1">Weight</label>
@@ -169,7 +190,7 @@
                                     </validate>
                                 </d-col>
                             </d-row>
-                            <d-row class="form-row">
+                            <d-row v-if="$auth.user().role == 'admin'" class="form-row">
                                 <d-col md="6" sm="6" class="col">
                                     <validate class="form-group">
                                         <label class="mb-1">BP</label>
@@ -178,7 +199,7 @@
                                     </validate>
                                 </d-col>
                             </d-row>
-                            <d-row class="form-row">
+                            <d-row v-if="$auth.user().role == 'admin'" class="form-row">
                                 <d-col md="6" sm="6" class="col">
                                     <validate class="form-group">
                                         <label class="mb-1">Guardian</label>
@@ -223,7 +244,12 @@
         },
         data() {
             return {
+                togglePass  : false,
                 formState   : {},
+                avatar      : {
+                    show        : false,
+                    preview     : '',
+                },
                 options     : {
                     elementary  : [
                         {key: 1, label: 1},
@@ -246,9 +272,12 @@
                 },
                 model       : {
                     record    : {
+                        avatar      : null,
                         email       : null,
+                        password    : null,
                         meta        : {
                             number      : null,
+                            avatar      : 0,
                             fname       : null,
                             mname       : null,
                             lname       : null,
@@ -285,21 +314,47 @@
             }
         },
         methods     : {
+            uploadAvatar() {
+                this.model.record.avatar = this.$refs.avatar.files[0]
+
+                let reader  = new FileReader()
+
+                reader.addEventListener("load", function () {
+                    this.avatar.show = true
+                    this.avatar.preview = reader.result
+                }.bind(this), false)
+              
+                if( this.model.record.avatar ){
+                    if ( /\.(jpe?g|png|gif)$/i.test( this.model.record.avatar.name ) ) {
+                        reader.readAsDataURL( this.model.record.avatar )
+                    }
+                }
+            },
             get() {
                 Vue.axios({
                     method  : 'GET',
                     url     : 'user/'+ (this.$auth.user().role != 'admin' ? this.$auth.user().id : this.$route.params.id),
                 }).then((response) => {
                     this.model.record = response.data
+
+                    if( response.data.meta.avatar ) {
+                        this.avatar.show = true
+                        this.avatar.preview = '/storage/avatars/'+ response.data.meta.avatar
+                    } 
                 })
             },
             update() {
-                Vue.axios({
-                    method  : 'PUT',
-                    url     : 'user/'+ (this.$auth.user().role != 'admin' ? this.$auth.user().id : this.$route.params.id),
-                    params  : this.model.record,
-                }).then((response) => {
+                let formData = new FormData
+                formData.append('method', 'PUT')
+                formData.append('user', this.$auth.user().role != 'admin' ? this.$auth.user().id : this.$route.params.id)
+                formData.append('avatar', this.model.record.avatar)
+                formData.append('data', JSON.stringify(this.model.record))
+
+                Vue.axios.post('/user', formData).then((response) => {
                     this.$refs.alerts.add('Record updated.', 'messages')
+
+                    this.togglePass = false
+                    this.model.record.password = null
                 })
             }
         },

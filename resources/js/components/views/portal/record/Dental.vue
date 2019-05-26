@@ -1,6 +1,6 @@
 <template>
     <div>
-        <page-header>Dental Record</page-header>
+        <page-header>Dental Record  : {{ patient.meta.fname ? patient.meta.fname +' '+ patient.meta.mname +' '+ patient.meta.lname : patient.email }}</page-header>
         <alerts ref="alerts"></alerts>
         <d-row class="dental__teeth-chart">
             <d-col cols="12">
@@ -161,7 +161,44 @@
         ],
         data() {
             return {
-                patient : {},
+                patient     : {
+                    id	        : null,
+                    email	    : null,
+                    role	    : null,
+                    meta        : {
+                        number	    : null,
+                        fname	    : null,
+                        mname	    : null,
+                        lname	    : null,
+                        address	    : null,
+                        birthday	: null,
+                        position	: null,
+                        weight	    : null,
+                        height	    : null,
+                        bp	        : null,
+                        level	    : {
+                            selected    : 'elementary',
+                            options     : [
+                                {key: 'elementary', label: 'Elementary'},
+                                {key: 'high-school', label: 'High School'},
+                                {key: 'senior-high', label: 'Senior High'},
+                                {key: 'college', label: 'College'},
+                            ]
+                        },
+                        stage	    : null,
+                        gender	    : {
+                            selected    : 'm',
+                            options     : [
+                                {key: 'm', label: 'Male'},
+                                {key: 'f', label: 'Female'},
+                            ]
+                        },
+                        guardian    : {
+                            name	    : null,
+                            phone	    : null,
+                        },
+                    },
+                },
                 model   : {
                     record  : {
                         hasRecord   : false,

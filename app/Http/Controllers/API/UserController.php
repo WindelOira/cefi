@@ -7,6 +7,7 @@ use App\Meta;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 
 class UserController extends Controller
@@ -39,26 +40,98 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->only(['email', 'password', 'type',]);
-        $data['password'] = Hash::make($data['password']);
-        $meta = json_decode($request->meta, TRUE);
+        $request->data = json_decode($request->data);
+        $metas = (array) $request->data->meta;
 
-        $user = User::create($data);
-       
-        foreach( $meta as $key => $value ) :
-            $user->metas()->create([
-                'key'   => $key,
-                'val'   => is_array($value) ? serialize($value) : $value,
+        if( $request->method == "PUT" ) :
+            $user = User::findOrFail((int) $request->user);
+            $user->email = $request->data->email;
+            if( ! empty($request->data->password) ) :
+                $user->password = Hash::make($request->data->password);
+            endif;
+
+            if( 0 < count($user->metas) ) :
+                foreach( $user->metas as $meta ) :
+                    $meta->val = is_object($metas[$meta->key]) ? serialize((array) $metas[$meta->key]) : $metas[$meta->key];
+                    $meta->save();
+                endforeach;
+            else :
+                foreach( $metas as $key => $value ) :
+                    $user->metas()->create([
+                        'key'   => $key,
+                        'val'   => is_object($value) ? serialize((array) $value) : $value,
+                    ]);
+                endforeach;
+            endif;
+
+            if( $request->file('avatar') ) :
+                $request->file('avatar')->storeAs('public/avatars', 'user-avatar-'. $user->id .'.'. $request->file('avatar')->getClientOriginalExtension());
+
+                $user->metas()->create([
+                    'key'   => 'avatar',
+                    'val'   => 'user-avatar-'. $user->id .'.'. $request->file('avatar')->getClientOriginalExtension()
+                ]);
+            endif;
+
+            if( ! empty($request->data->password) ) :
+                $emailName = $meta->fname;
+                $emailTo = $request->data->email;
+                $emailData = [
+                    'name'      => $meta->fname .' '. $meta->lname,
+                    'password'  => $request->data->password,
+                    'loginURL'  => env('APP_URL')
+                ];
+                Mail::send('emails.password-changed', $emailData, function($message) use ($emailName, $emailTo) {
+                    $message->to($emailTo, $emailName)
+                    ->subject('CEFI Medical & Dentail Management Account');
+
+                    $message->from(env('MAIL_USERNAME'), 'CEFI');
+                });
+            endif;
+
+            $user->save();
+
+            return response()->json($user);
+        else :
+            $user = User::create([
+                'email'     => $request->data->email,
+                'password'  => Hash::make($request->data->password),
+                'role'      => $request->data->type,
             ]);
-        endforeach;
-
-        $user->records()->create([
-            'type'  => 'info',
-            'date'  => date('Y-m-d', strtotime('now')),
-            'data'  => $request->records
-        ]);
         
-        return response()->json($user);
+            foreach( $meta as $key => $value ) :
+                $user->metas()->create([
+                    'key'   => $key,
+                    'val'   => is_object($value) ? serialize((array) $value) : $value,
+                ]);
+            endforeach;
+
+            if( $request->file('avatar') ) :
+                $request->file('avatar')->storeAs('public/avatars', 'user-avatar-'. $user->id .'.'. $request->file('avatar')->getClientOriginalExtension());
+
+                $user->metas()->create([
+                    'key'   => 'avatar',
+                    'val'   => 'user-avatar-'. $user->id .'.'. $request->file('avatar')->getClientOriginalExtension()
+                ]);
+            endif;
+
+            $emailName = $meta->fname;
+            $emailTo = $request->data->email;
+            $emailData = [
+                'name'      => $meta->fname .' '. $meta->lname,
+                'email'     => $request->data->email,
+                'password'  => $request->data->password,
+                'loginURL'  => env('APP_URL')
+            ];
+            Mail::send('emails.welcome', $emailData, function($message) use ($emailName, $emailTo) {
+                $message->to($emailTo, $emailName)
+                ->subject('CEFI Medical & Dentail Management Account');
+
+                $message->from(env('MAIL_USERNAME'), 'CEFI');
+            });
+            
+            return response()->json($user);
+        endif;
     }
 
     /**
@@ -108,7 +181,11 @@ class UserController extends Controller
 
         if( $user->metas ) :
             foreach( $user->metas as $meta ) :
-                $data['meta'][$meta->key] = is_serialized($meta->val) ? unserialize($meta->val) : $meta->val;
+                if( ! is_null($meta->val) ) :
+                    $data['meta'][$meta->key] = is_serialized($meta->val) ? unserialize($meta->val) : $meta->val;
+                else :
+                    $data['meta'][$meta->key] = NULL;
+                endif;
             endforeach;
         endif;
 
@@ -188,19 +265,45 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function register(Request $request) {
-        $data = $request->only(['email', 'type',]);
-        $data['password'] = '';
-        $data['role'] = $request->type;
-        $meta = json_decode($request->meta, TRUE);
+        $request->data = json_decode($request->data);
+        $meta = $request->data->meta;
 
-        $user = User::create($data);
+        $user = User::create([
+            'email'     => $request->data->email,
+            'password'  => Hash::make($request->data->password),
+            'role'      => $request->data->type,
+        ]);
        
         foreach( $meta as $key => $value ) :
             $user->metas()->create([
                 'key'   => $key,
-                'val'   => is_array($value) ? serialize($value) : $value,
+                'val'   => is_object($value) ? serialize((array) $value) : $value,
             ]);
         endforeach;
+
+        if( $request->file('avatar') ) :
+            $request->file('avatar')->storeAs('public/avatars', 'user-avatar-'. $user->id .'.'. $request->file('avatar')->getClientOriginalExtension());
+
+            $user->metas()->create([
+                'key'   => 'avatar',
+                'val'   => 'user-avatar-'. $user->id .'.'. $request->file('avatar')->getClientOriginalExtension()
+            ]);
+        endif;
+
+        $emailName = $meta->fname;
+        $emailTo = $request->data->email;
+        $emailData = [
+            'name'      => $meta->fname .' '. $meta->lname,
+            'email'     => $request->data->email,
+            'password'  => $request->data->password,
+            'loginURL'  => env('APP_URL')
+        ];
+        Mail::send('emails.welcome', $emailData, function($message) use ($emailName, $emailTo) {
+            $message->to($emailTo, $emailName)
+            ->subject('CEFI Medical & Dentail Management Account');
+
+            $message->from(env('MAIL_USERNAME'), 'CEFI');
+        });
         
         return response()->json($user);
     }

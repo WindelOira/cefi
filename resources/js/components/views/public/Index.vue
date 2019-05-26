@@ -65,10 +65,19 @@
                         email       : app.model.email,
                         password    : app.model.password,
                     },
-                    success : function() {
-                        this.$router.push({
-                            name : 'portal.index',
-                        })
+                    success : function(response) {
+                        if( this.$auth.user().role == 'admin' ) {
+                            this.$router.push({
+                                name : 'portal.index',
+                            })
+                        } else {
+                           this.$router.push({
+                               name : 'portal.records.dental',
+                               params : {
+                                   id   : this.$auth.user().id
+                               }
+                           }) 
+                        }
                     },
                     error   : function() {
                         console.log(0)

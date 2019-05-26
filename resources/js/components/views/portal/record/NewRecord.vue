@@ -5,9 +5,18 @@
         <alerts ref="alerts"></alerts>
         <d-row>
             <d-col cols="12" md="6" offset-md="3" sm="8" offset-sm="2">
-                <d-card>
-                    <d-card-body>
-                        <vue-form :state="formState" @submit.prevent="save">
+                <d-card class="user-details mt-5">
+                    <d-card-body class="pt-0">
+                        <vue-form :state="formState" @submit.prevent="save" enctype="multipart/form-data">
+                            <div class="bg-white user-details__avatar mx-auto mb-4" :style="avatar.show ? 'background-image: url('+ avatar.preview +');' : ''">
+                                <label class="d-flex align-items-center justify-content-center">
+                                    <input @change="uploadAvatar" 
+                                            ref="avatar" 
+                                            type="file" 
+                                            accept="image/*"/>
+                                    <vue-material-icon name="photo" size="20"></vue-material-icon>
+                                </label>
+                            </div>
                             <d-row class="form-row">
                                 <d-col>
                                     <validate class="form-group">
@@ -57,6 +66,16 @@
                             <d-row class="form-row">
                                 <d-col>
                                     <validate class="form-group">
+                                        <label class="mb-1">Password</label>
+                                        <d-input v-model="model.record.password" 
+                                                type="password" 
+                                                class="form-control-sm"></d-input>
+                                    </validate>
+                                </d-col>
+                            </d-row>
+                            <d-row class="form-row">
+                                <d-col>
+                                    <validate class="form-group">
                                         <label class="mb-1">Address</label>
                                         <d-input v-model="model.record.meta.address" 
                                                 class="form-control-sm"></d-input>
@@ -73,7 +92,7 @@
                                 </d-col>
                                 <d-col md="6" sm="6" class="col">
                                     <validate class="form-group">
-                                        <label class="mb-1">Gender</label>
+                                        <label class="mb-1">Sex</label>
                                         <d-form-select v-model="model.record.meta.gender.selected" style="height: 34.2px;">
                                             <option v-for="gender in model.record.meta.gender.options" :key="gender.key" :value="gender.key">{{ gender.label }}</option>
                                         </d-form-select>
@@ -224,6 +243,10 @@
         data() {
             return {
                 formState   : {},
+                avatar      : {
+                    show        : false,
+                    preview     : '',
+                },
                 options     : {
                     elementary  : [
                         {key: 1, label: 1},
@@ -246,10 +269,13 @@
                 },
                 model       : {
                     record    : {
+                        avatar      : null,
                         email       : null,
+                        password    : null,
                         type        : this.$route.params.type,
                         meta        : {
                             number      : null,
+                            avatar      : 0,
                             fname       : null,
                             mname       : null,
                             lname       : null,
@@ -299,20 +325,28 @@
             },
         },
         methods     : {
-            get() {
-                Vue.axios({
-                    method  : 'GET',
-                    url     : 'user/'+ (this.$auth.user().role != 'admin' ? this.$auth.user().id : this.$route.params.id),
-                }).then((response) => {
-                    this.model.record = response.data
-                })
+            uploadAvatar() {
+                this.model.record.avatar = this.$refs.avatar.files[0]
+
+                let reader  = new FileReader()
+
+                reader.addEventListener('load', function () {
+                    this.avatar.show = true
+                    this.avatar.preview = reader.result
+                }.bind(this), false)
+              
+                if( this.model.record.avatar ){
+                    if ( /\.(jpe?g|png|gif)$/i.test( this.model.record.avatar.name ) ) {
+                        reader.readAsDataURL( this.model.record.avatar )
+                    }
+                }
             },
             save() {
-                Vue.axios({
-                    url     : '/user/register',
-                    method  : 'POST',
-                    params  : this.model.record,
-                }).then((response) => {
+                let formData = new FormData
+                formData.append('avatar', this.model.record.avatar)
+                formData.append('data', JSON.stringify(this.model.record))
+
+                Vue.axios.post('/user/register', formData).then((response) => {
                     this.$refs.alerts.add('New '+ this.$route.params.type +' added.', 'messages')
                     this.$router.push({
                         name    : 'portal.records.medical',
@@ -323,9 +357,6 @@
                 })
             }
         },
-        mounted() {
-            this.get()
-        }
     }
 </script>
 

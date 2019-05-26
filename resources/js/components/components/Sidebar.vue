@@ -16,8 +16,6 @@
         </div>
         <div v-else class="nav-wrapper">
             <d-nav class="nav--no-borders" vertical>
-                <d-nav-item :to="{name: 'portal.index'}">Dashboard</d-nav-item>
-                <d-nav-item :to="{name: 'portal.user.medical'}">Medical Records</d-nav-item>
                 <d-nav-item :to="{name: 'portal.user.dental'}">Dental Records</d-nav-item>
                 <d-nav-item :to="{name: 'portal.user.profile.edit'}">Profile</d-nav-item>
             </d-nav>

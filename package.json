@@ -26,7 +26,6 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
-        "@gravitano/vue-date-range-picker": "^0.1.7",
         "@types/date-fns": "^2.6.0",
         "@voerro/vue-tagsinput": "^1.11.2",
         "@websanova/vue-auth": "^2.21.14-beta",
@@ -44,12 +43,8 @@
         "vue-datetime": "^1.0.0-beta.10",
         "vue-form": "^4.10.1",
         "vue-material-icon": "^1.0.1",
-        "vue-month-picker": "^1.1.0",
-        "vue-rangedate-picker": "^1.0.0",
         "vue-router": "^3.0.3",
-        "vue2-daterange-picker": "^0.2.3",
         "vue2-filters": "^0.6.0",
-        "vuetify-daterange-picker": "^3.1.6",
         "weekstart": "^1.0.0"
     }
 }

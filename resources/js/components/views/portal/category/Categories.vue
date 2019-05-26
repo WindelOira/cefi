@@ -119,7 +119,8 @@
 
                     if( 0 < response.data.length )
                         response.data.forEach((category) => {
-                            if( category.parent == null )
+                            if( category.parent == null && 
+                                (category.id == 1 || category.id == 11 || category.id == 21 || category.id == 32 || category.id == 36))
                                 this.model.category.parent.options.push({
                                     value   : category.id,
                                     text    : category.name
@@ -163,11 +164,6 @@
                     this.$refs.alerts.add('New category added', 'messages')
 
                     this.table.data.push(response.data)
-                    if( response.data.parent == null )
-                        this.model.category.parent.options.push({
-                            value   : response.data.id,
-                            text    : response.data.name
-                        })
 
                     this.reset()
                 })
