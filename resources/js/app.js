@@ -85,7 +85,7 @@ Vue.component(VueMaterialIcon.name, VueMaterialIcon)
 axios.defaults.baseURL = process.env.MIX_APP_URL +'/api'
 
 const app = new Vue({
-    el      : '#app',
-    router  : Router,
-    render  : app => app(App)
+    el          : '#app',
+    router      : Router,
+    render      : app => app(App)
 })

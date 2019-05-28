@@ -300,10 +300,12 @@
                                     items   : [],
                                 }
                             } else {
-                                categories[category.parent].items.push({
-                                    key     : category.id,
-                                    value   : category.name
-                                })
+                                if( typeof categories[category.parent] != 'undefined' ) {
+                                    categories[category.parent].items.push({
+                                        key     : category.id,
+                                        value   : category.name
+                                    })
+                                }
                             }
 
                             if( 1 == category.complainable ) {

@@ -210,8 +210,9 @@ h1, h2, h3, h4, h5, h6,
 .user-details__avatar {
     min-width: 110px;
     min-height: 110px;
-    background-size: cover;
+    background-size: contain;
     background-position: center;
+    background-repeat: no-repeat;
     position: relative;
 }
 .user-details__avatar label {

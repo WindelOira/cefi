@@ -200,7 +200,7 @@
                             <d-row class="form-row">
                                 <d-col md="6" sm="6" class="col">
                                     <validate class="form-group">
-                                        <label class="mb-1">Guardian</label>
+                                        <label class="mb-1">Person to notify:</label>
                                         <d-input v-model="model.record.meta.guardian.name" 
                                                 class="form-control-sm"></d-input>
                                     </validate>
